@@ -27,9 +27,11 @@ TEMPLATES_DIR=os.path.join(BASE_DIR,'templates')
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DJANGO_DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+#CSRF_TRUSTED_ORIGINS = []
+
 
 
 # Application definition
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'taskapp',
     'crispy_forms',
     'crispy_bootstrap5',
+     
 ]
 
 MIDDLEWARE = [
@@ -133,6 +136,7 @@ STATIC_URL = 'static/'
 STATIC_DIR=os.path.join(BASE_DIR,'static')
 STATICFILES_DIRS=[STATIC_DIR]
 STATIC_ROOT=os.path.join(BASE_DIR,'staticfiles')
+TATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -145,3 +149,6 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 LOGIN_REDIRECT_URL = "todolist"
 LOGIN_URL = "login"
+
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
