@@ -12,8 +12,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os 
+import dj_database_url
 import environ
-env=environ.Env()
+env=environ.Env(DEBUG=(bool, False))
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,12 +25,14 @@ TEMPLATES_DIR=os.path.join(BASE_DIR,'templates')
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY')
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1","todo-production-9aca.up.railway.app"]
+CSRF_TRUSTED_ORIGINS = ["https://todo-production-9aca.up.railway.app","https://www.todo-production-9aca.up.railway.app"]
+
 
 
 # Application definition
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
     'taskapp',
     'crispy_forms',
     'crispy_bootstrap5',
+     
 ]
 
 MIDDLEWARE = [
@@ -81,18 +85,23 @@ WSGI_APPLICATION = 'todo.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env("DJNAGO_DB_NAME"),
-        'USER': env("DJNAGO_DB_USER"),
-        'PASSWORD': env("DJANGO_DB_PASSWORD"),
-        'HOST': env("DJANGO_DB_HOST"),
-        'PORT': env("DJNAGO_DB_PORT"),
+if env('ENVIRONMENT') == 'production':
+    DATABASES = {
+        'default': dj_database_url.config(default=env("DATABASE_URL"))
     }
-}
+else:
+
+    DATABASES = {
+        'default': {
+            
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env("DJNAGO_DB_NAME"),
+            'USER': env("DJNAGO_DB_USER"),
+            'PASSWORD': env("DJANGO_DB_PASSWORD"),
+            'HOST': env("DJANGO_DB_HOST"),
+            'PORT': env("DJNAGO_DB_PORT"),
+        }
+    }
 
 
 # Password validation
@@ -133,6 +142,7 @@ STATIC_URL = 'static/'
 STATIC_DIR=os.path.join(BASE_DIR,'static')
 STATICFILES_DIRS=[STATIC_DIR]
 STATIC_ROOT=os.path.join(BASE_DIR,'staticfiles')
+TATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -145,3 +155,6 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 LOGIN_REDIRECT_URL = "todolist"
 LOGIN_URL = "login"
+
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
