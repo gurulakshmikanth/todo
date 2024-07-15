@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os 
+import dj_database_url
 import environ
 env=environ.Env(DEBUG=(bool, False))
 environ.Env.read_env()
@@ -84,18 +85,23 @@ WSGI_APPLICATION = 'todo.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env("DJNAGO_DB_NAME"),
-        'USER': env("DJNAGO_DB_USER"),
-        'PASSWORD': env("DJANGO_DB_PASSWORD"),
-        'HOST': env("DJANGO_DB_HOST"),
-        'PORT': env("DJNAGO_DB_PORT"),
+if env('ENVIRONMENT') == 'production':
+    DATABASES = {
+        'default': dj_database_url.config(default=env("DATABASE_URL"))
     }
-}
+else:
+
+    DATABASES = {
+        'default': {
+            
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env("DJNAGO_DB_NAME"),
+            'USER': env("DJNAGO_DB_USER"),
+            'PASSWORD': env("DJANGO_DB_PASSWORD"),
+            'HOST': env("DJANGO_DB_HOST"),
+            'PORT': env("DJNAGO_DB_PORT"),
+        }
+    }
 
 
 # Password validation
