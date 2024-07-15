@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os 
 import environ
-env=environ.Env()
+env=environ.Env(DEBUG=(bool, False))
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +27,7 @@ TEMPLATES_DIR=os.path.join(BASE_DIR,'templates')
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DJANGO_DEBUG")
+DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1","todo-production-9aca.up.railway.app"]
 CSRF_TRUSTED_ORIGINS = ["https://todo-production-9aca.up.railway.app","https://www.todo-production-9aca.up.railway.app"]
